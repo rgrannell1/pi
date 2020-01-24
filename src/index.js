@@ -81,4 +81,4 @@ const showApproximations = order => {
   closingSplash(count)
 }
 
-showApproximations(5)
+showApproximations(2)
