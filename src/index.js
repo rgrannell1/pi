@@ -50,7 +50,7 @@ function* pi (order) {
 
 const openingSplash = order => {
   console.log(`
-    π π π 🥧 🥧 🥧 π π π
+    π π π 🥧 🥧 🥧
 
     Finding all π approximations (terms bounded by 10^${order})
   `)
@@ -60,7 +60,7 @@ const closingSplash = count => {
   console.log(`
   Found ${count} approximations
 
-  π π π 🥧 🥧 🥧 π π π
+  π π π 🥧 🥧 🥧
   `)
 
 }
