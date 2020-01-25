@@ -1,51 +1,14 @@
 
-const getCommonPrefix = (num0, num1) => {
-  const str0 = `${num0}`
-  const str1 = `${num1}`
-
-  for (let char = 0; char < Math.max(str0.length, str1.length); ++char) {
-    if (str0[char] !== str1[char]) {
-      return str0.slice(0, char)
-    }
-  }
-
-  return str0
-}
-
-const randomPair = order => {
-  return [
-    Math.floor(Math.random() * Math.pow(10, order)),
-    Math.floor(Math.random() * Math.pow(10, order))
-  ]
-}
-
-/*
-  Looking for an approximation of π with the following characteristics:
-
-  - the most accurate digits
-  - more compressed representations are rewarded, less are punished
-  - a less accurate but more compressed approximation is better
-
-  e.g 14 digits represented in 6 characters
-
-  score = 14 x (14/6)
-
-  0 digits represented in 8 characters
-
-  score = 0 x (0/8)
-
- */
-
-function* candidates(order) {
+function* candateRatios(order:number) {
   let numerator = 1
   let denominator = 1
 
-  while (true) {
+  while (denominator < Math.pow(10, order)) {
     let ratio = numerator / denominator
 
-    if (ratio > 4) {
-      numerator = 1
+    if (ratio > 3.15) {
       denominator++
+      numerator = Math.floor(denominator * 3.12)
     } else {
       numerator++
     }
@@ -54,14 +17,12 @@ function* candidates(order) {
   }
 }
 
-function* pi (order) {
-  let accurateApprox = {
-    score: -1000
-  }
+function* pi (order:number) {
+  let accurateApprox
 
   let bounds = Math.pow(10, order)
 
-  for ([numerator, denominator] of candidates(order)) {
+  for (let [numerator, denominator] of candateRatios(order)) {
     let approximation = numerator / denominator
     let difference = Math.abs(Math.PI - approximation)
     // -- length of the numbers
@@ -72,7 +33,7 @@ function* pi (order) {
 
     let score = accurateTo * (accurateTo / complexity)
 
-    if (score >= accurateApprox.score) {
+    if (!accurateApprox || score >= accurateApprox.score) {
       const prefix = approximation.toFixed(accurateTo)
 
       accurateApprox = {
@@ -97,9 +58,9 @@ const openingSplash = order => {
   `)
 }
 
-const closingSplash = count => {
+const closingSplash = (count, order) => {
   console.log(`
-  Found ${count} approximations
+  Found ${count} approximations under 10^${order}
 
   π π π 🥧 🥧 🥧
   `)
@@ -113,11 +74,13 @@ const reportValue = data => {
 const showApproximations = order => {
   openingSplash(order)
 
+  let count = 0
   for (const approx of pi(order)) {
     reportValue(approx)
+    ++count
   }
 
-  closingSplash(count)
+  closingSplash(count, order)
 }
 
-showApproximations(8)
+showApproximations(6)
