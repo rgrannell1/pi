@@ -14,36 +14,76 @@ const getCommonPrefix = (num0, num1) => {
 
 const randomPair = order => {
   return [
-    Math.floor(Math.random() * order),
-    Math.floor(Math.random() * order),
+    Math.floor(Math.random() * Math.pow(10, order)),
+    Math.floor(Math.random() * Math.pow(10, order))
   ]
+}
+
+/*
+  Looking for an approximation of π with the following characteristics:
+
+  - the most accurate digits
+  - more compressed representations are rewarded, less are punished
+  - a less accurate but more compressed approximation is better
+
+  e.g 14 digits represented in 6 characters
+
+  score = 14 x (14/6)
+
+  0 digits represented in 8 characters
+
+  score = 0 x (0/8)
+
+ */
+
+function* candidates(order) {
+  let numerator = 1
+  let denominator = 1
+
+  while (true) {
+    let ratio = numerator / denominator
+
+    if (ratio > 4) {
+      numerator = 1
+      denominator++
+    } else {
+      numerator++
+    }
+
+    yield [numerator, denominator]
+  }
 }
 
 function* pi (order) {
   let accurateApprox = {
-    difference: 1e10
+    score: -1000
   }
 
-  for (let numerator = 1; numerator < Math.pow(10, order); ++numerator) {
-    for (let denominator = 1; denominator < Math.pow(10, order); ++denominator) {
-      let approximation = numerator / denominator
-      let difference = Math.abs(Math.PI - approximation)
-      let complexity = `${numerator}${denominator}`.length
+  let bounds = Math.pow(10, order)
 
-      if (difference < accurateApprox.difference && approximation > 3 && approximation < 4) {
-        const prefix = getCommonPrefix(Math.PI, approximation)
-        accurateApprox = {
-          approximation,
-          difference,
-          ratio: `${numerator} / ${denominator}`,
-          complexity,
-          value: prefix.endsWith('.')
-            ? prefix.replace('.', '')
-            : prefix
-        }
+  for ([numerator, denominator] of candidates(order)) {
+    let approximation = numerator / denominator
+    let difference = Math.abs(Math.PI - approximation)
+    // -- length of the numbers
+    let complexity = Math.ceil(Math.log10(numerator)) + Math.ceil(Math.log10(denominator))
 
-        yield accurateApprox
+    // -- number of accurate decimels
+    let accurateTo = Math.abs(Math.floor(Math.log10(difference)))
+
+    let score = accurateTo * (accurateTo / complexity)
+
+    if (score >= accurateApprox.score) {
+      const prefix = approximation.toFixed(accurateTo)
+
+      accurateApprox = {
+        approximation,
+        difference,
+        ratio: `${numerator} / ${denominator}`,
+        complexity,
+        value: prefix
       }
+
+      yield accurateApprox
     }
   }
 }
@@ -72,13 +112,11 @@ const reportValue = data => {
 const showApproximations = order => {
   openingSplash(order)
 
-  let count = 0
   for (const approx of pi(order)) {
     reportValue(approx)
-    ++count
   }
 
   closingSplash(count)
 }
 
-showApproximations(10)
+showApproximations(3)
