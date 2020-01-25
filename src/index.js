@@ -80,7 +80,8 @@ function* pi (order) {
         difference,
         ratio: `${numerator} / ${denominator}`,
         complexity,
-        value: prefix
+        value: prefix,
+        score
       }
 
       yield accurateApprox
@@ -119,4 +120,4 @@ const showApproximations = order => {
   closingSplash(count)
 }
 
-showApproximations(3)
+showApproximations(8)
