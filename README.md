@@ -11,7 +11,7 @@ On my podcast we discussed several mathematicians with early approximations of �
 
 ## Are Pi Approximations Useful?
 
-Not really. Most approximations are longer than their decimal approximation. For example,
+Not really. Most rational approximations are _longer_ than their decimal approximation. For example,
 
 `π ≈ 103638 / 32989 (3.141 592 65)`
 
